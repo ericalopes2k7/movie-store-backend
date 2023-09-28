@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using movie_store_backend.Services.IServices;
 
 namespace movie_store_backend.Controllers
 {
@@ -6,6 +7,13 @@ namespace movie_store_backend.Controllers
     [Route("[controller]")]
     public class MovieController : Controller
     {
+        private readonly IMovieService _movieService;
+
+        public MovieController(IMovieService movieService)
+        {
+            _movieService = movieService;
+        }
+
         [HttpPost]
         public ActionResult CreateMovie()
         {
