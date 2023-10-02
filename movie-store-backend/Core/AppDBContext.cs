@@ -11,5 +11,10 @@ namespace movie_store_backend.Core
         {
             optionsBuilder.UseInMemoryDatabase(databaseName: "movieStore");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new MovieConfig());
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using movie_store_backend.DTOs;
 using movie_store_backend.Services.IServices;
+using System.Diagnostics;
 
 namespace movie_store_backend.Controllers
 {
@@ -15,39 +17,118 @@ namespace movie_store_backend.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateMovie()
+        public async Task<ActionResult> CreateMovie(MovieRequestBody dto)
         {
-            return StatusCode(StatusCodes.Status201Created, "Movie created");
+            try
+            {
+                var result = await _movieService.CreateMovie(dto);
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status201Created, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
 
         [HttpGet]
-        public ActionResult FindMovie()
+        public async Task<ActionResult> FindMovie([FromQuery(Name = "id")] string id)
         {
-            return StatusCode(StatusCodes.Status200OK, "Movie found");
+            try
+            {
+                var result = await _movieService.FindMovie(id);
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
 
         [HttpGet("search")]
-        public ActionResult FindMovies()
+        public async Task<ActionResult> FindMovies([FromQuery(Name = "title")] string title)
         {
-            return StatusCode(StatusCodes.Status200OK, "Movies found");
+            Debug.WriteLine(title);
+            try
+            {
+                var result = await _movieService.FindMovies(title);
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
 
         [HttpGet("all")]
-        public ActionResult FindAllMovies()
+        public async Task<ActionResult> FindAllMovies()
         {
-            return StatusCode(StatusCodes.Status200OK, "All Movies were found");
+            try
+            {
+                var result = await _movieService.FindAllMovies();
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
 
         [HttpPut]
-        public ActionResult UpdateMovie()
+        public async Task<ActionResult> UpdateMovie([FromQuery(Name = "id")] string id, MovieRequestBody dto)
         {
-            return StatusCode(StatusCodes.Status200OK, "Movie updated");
+            try
+            {
+                var result = await _movieService.UpdateMovie(id, dto);
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
 
         [HttpDelete]
-        public ActionResult DeleteMovie()
+        public async Task<ActionResult> DeleteMovie([FromQuery(Name = "id")] string id)
         {
-            return StatusCode(StatusCodes.Status200OK, "Movie deleted");
+            try
+            {
+                var result = await _movieService.DeleteMovie(id);
+                if (!result.isSuccess)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, result.errorMessage);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, result.value);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
         }
     }
 }
